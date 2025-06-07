@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AUTOSAR RAG Assistant</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f4; }
+    h1 { text-align: center; }
+    input, select {
+      width: 80%; padding: 10px; margin: 10px auto; display: block; font-size: 16px;
+    }
+    #askButton {
+      display: block; margin: 10px auto; padding: 10px 20px;
+      font-size: 16px; cursor: pointer;
+    }
+    #answer {
+      margin-top: 20px; padding: 20px; background: white; border-radius: 8px; min-height: 100px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🚗 AUTOSAR RAG Assistant</h1>
+
+<input type="text" id="query" placeholder="Enter your AUTOSAR question here..." />
+<input type="text" id="module" placeholder="Optional module filter (e.g., CanTp)" />
+<input type="text" id="keyword" placeholder="Optional keyword filter (e.g., segmentation)" />
+<input type="text" id="source" placeholder="Optional document name (e.g., AUTOSAR_SWS_CANTransportLayer.pdf)" />
+
+<button id="askButton">Ask</button>
+
+<div id="answer">Answer will appear here...</div>
+
+<script>
+document.getElementById('askButton').addEventListener('click', async () => {
+  const query = document.getElementById('query').value;
+  const module = document.getElementById('module').value;
+  const keyword = document.getElementById('keyword').value;
+  const source = document.getElementById('source').value;
+
+  const requestBody = { query };
+  if (module) requestBody.module = module;
+  if (keyword) requestBody.keyword = keyword;
+  if (source) requestBody.source = source;
+
+  const response = await fetch('http://localhost:5000/ask', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(requestBody)
+  });
+
+  const data = await response.json();
+  document.getElementById('answer').innerText = data.answer || 'No answer received.';
+});
+</script>
+
+</body>
+</html>
